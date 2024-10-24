@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf_merger/pdf_merger.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:get/get.dart';
 
 void main() {
   runApp(MyApp());
@@ -40,152 +39,26 @@ class _MyAppState extends State<MyApp> {
           child: Container(
               margin: EdgeInsets.all(25),
               child: Column(children: [
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
+                InkWell(
+                  onTap: () {
+                    multipleFilePicker();
+                  },
                   child: Text(
                     "Chose File",
                     style: TextStyle(fontSize: 14.0),
                   ),
-                  onPressed: () {
-                    multipleFilePicker();
-                  },
                 ),
                 SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
+                InkWell(
+                  onTap: () {
+                    callMethod(1);
+                  },
                   child: Text(
                     "Merge Multiple PDF",
                     style: TextStyle(fontSize: 14.0),
                   ),
-                  onPressed: () {
-                    callMethod(1);
-                  },
                 ),
                 SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
-                  child: Text(
-                    "Create PDF From Multiple Image",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  onPressed: () {
-                    callMethod(2);
-                  },
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
-                  child: Text(
-                    "Create Image From PDF",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  onPressed: () {
-                    singleFilePicker(1);
-                  },
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
-                  child: Text(
-                    "Get File Size",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  onPressed: () {
-                    singleFilePicker(2);
-                  },
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
-                  child: Text(
-                    "Clear",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  onPressed: () {
-                    clear();
-                  },
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  style: ButtonStyle(overlayColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.focused))
-                      return Colors.red;
-                    if (states.contains(MaterialState.hovered))
-                      return Colors.green;
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.blue;
-                    return Colors.blue;
-                  })),
-                  child: Text(
-                    "Build Info",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  onPressed: () {
-                    // buildInfo();
-                  },
-                ),
               ])),
         ),
       ),
@@ -292,6 +165,7 @@ class _MyAppState extends State<MyApp> {
       Get.snackbar("Info", response.message ?? '');
 
       if (response.status == "success") {
+        print(response.response);
         OpenFile.open(response.response);
       }
 
@@ -371,7 +245,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<String> getFilePath(String fileStartName) async {
     String path = '';
-    if (GetPlatform.isIOS) {
+    if (GetPlatform.isIOS || GetPlatform.isMacOS) {
       Directory appDocDir = await getApplicationDocumentsDirectory();
       path = appDocDir.path;
     }
