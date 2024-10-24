@@ -35,9 +35,8 @@ public class SwiftPdfMergerPlugin: NSObject, FlutterPlugin {
         do {
             let pdfData = NSMutableData()
             guard let consumer = CGDataConsumer(data: pdfData) else { return nil }
-            var mediaBox = CGRect(x: 0, y: 0, width: 595.2, height: 841.8) // A4 size
 
-            guard let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
+            guard let context = CGContext(consumer: consumer, mediaBox: nil, nil) else {
                 return nil
             }
 
@@ -49,6 +48,8 @@ public class SwiftPdfMergerPlugin: NSObject, FlutterPlugin {
 
                 for i in 1 ... pdfRef.numberOfPages {
                     if let page = pdfRef.page(at: i) {
+                        let pageRect = page.getBoxRect(.mediaBox) // Get original page size
+                        var mediaBox = pageRect // Assign to mediaBox to be used in beginPage
                         context.beginPage(mediaBox: &mediaBox)
                         context.drawPDFPage(page)
                         context.endPage()
