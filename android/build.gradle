@@ -28,6 +28,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 30
+    namespace 'com.ril.pdf_merger'
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
